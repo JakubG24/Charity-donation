@@ -39,13 +39,13 @@
     <section id="stats" class="stats">
       <div class="container container--85">
         <div class="stats--item">
-          <em>10</em>
+          <em>{{ bags }}</em>
           <h3>Oddanych worków</h3>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius est beatae, quod accusamus illum tempora!</p>
         </div>
 
         <div class="stats--item">
-          <em>5</em>
+          <em>{{ donations.count }}</em>
           <h3>Wspartych organizacji</h3>
           <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam magnam, sint nihil cupiditate quas quam.</p>
         </div>
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <a href="#" class="btn btn--large">Załóż konto</a>
+      <a href="{% url 'register' %}" class="btn btn--large">Załóż konto</a>
     </section>
 
     <section id="about-us" class="about-us">
@@ -103,42 +103,57 @@
       <!-- SLIDE 1 -->
       <div class="help--slides active" data-id="1">
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się zajmują, komu pomagają i czego potrzebują.</p>
-
+        {% for obj in fund_pages.object_list %}
         <ul class="help--slides-items">
           <li>
             <div class="col">
-              <div class="title">Fundacja "Dbam o Zdrowie"</div>
+              <div class="title">Fundacja "{{ obj.name }}"</div>
               <div class="subtitle">Cel i misja: Pomoc dzieciom z ubogich rodzin.</div>
             </div>
 
             <div class="col"><div class="text">ubrania, jedzenie, sprzęt AGD, meble, zabawki</div></div>
           </li>
-
-          <li>
-            <div class="col">
-              <div class="title">Fundacja “Dla dzieci"</div>
-              <div class="subtitle">Cel i misja: Pomoc osobom znajdującym się w trudnej sytuacji życiowej.</div>
-            </div>
-
-            <div class="col"><div class="text">ubrania, meble, zabawki</div></div>
-          </li>
-
-          <li>
-            <div class="col">
-              <div class="title">Fundacja “Bez domu”</div>
-              <div class="subtitle">Cel i misja: Pomoc dla osób nie posiadających miejsca zamieszkania</div>
-            </div>
-
-            <div class="col"><div class="text">ubrania, jedzenie, ciepłe koce</div></div>
-          </li>
         </ul>
-        <!-- Pagination
+          {% endfor %}
         <ul class="help--slides-pagination">
-          <li><a href="#" class="btn btn--small btn--without-border active" data-page="1">1</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="2">2</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="3">3</a></li>
+          {% if fund_pages.has_previous %}
+        <li>
+            <a href="?page={{ pages.previous_page_number }}#help"><i class="fa fa-chevron-left"
+                                                          aria-hidden="true"></i>&nbsp previous &nbsp</a>
+        </li>
+    {% else %}
+        <li class="disabled"><span><i class="" aria-hidden="true"></i></span></li>
+    {% endif %}
+    {% if fund_pages.number|add:'-4' > 1 %}
+        <li>
+            <a href="?page={{ pages.number|add:'-5' }}#help"> &hellip;</a>
+        </li>
+    {% endif %}
+    {% for i in fund_pages.paginator.page_range %}
+        {% if fund_pages.number == i %}
+            <li class="active"><span>|&nbsp{{ i }}&nbsp|<span class="sr-only"></span></span></li>
+        {% elif i > fund_pages.number|add:'-5' and i < fund_pages.number|add:'5' %}
+    <li>
+        <a href="?page={{ i }}#help">&nbsp{{ i }}&nbsp</a>
+    </li>
+        {% endif %}
+    {% endfor %}
+
+    {% if fund_pages.paginator.num_pages > fund_pages.number|add:'4' %}
+    <li>
+        <a href="?page={{ fund_pages.number|add:'5' }}#help"> &hellip;</a>
+    </li>
+    {% endif %}
+
+    {% if fund_pages.has_next %}
+        <li>
+            <a href="?page={{ fund_pages.next_page_number }}#help">&nbsp next &nbsp<i class="fa fa-chevron-right"
+                      aria-hidden="true"></i></a>
+        </li>
+    {% else %}
+        <li class="disabled"><span><i class="fa" aria-hidden="true"></i></span></li>
+    {% endif %}
         </ul>
-        -->
       </div>
 
 
@@ -148,84 +163,115 @@
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Hic officiis mollitia dolor, neque aspernatur accusamus debitis. Ducimus, officia. Quia, sunt illum! Non iste placeat ab ipsum alias
           quos suscipit corporis!
         </p>
+          {% for obj in ngos_pages.object_list %}
         <ul class="help--slides-items">
           <li>
             <div class="col">
-              <div class="title">Organizacja 1</div>
-              <div class="subtitle">Lorem ipsum dolor sit amet consectetur.</div>
-            </div>
-
-            <div class="col"><div class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div></div>
-          </li>
-
-          <li>
-            <div class="col">
-              <div class="title">Organizacja 2</div>
-              <div class="subtitle">Lorem ipsum dolor sit amet consectetur.</div>
-            </div>
-
-            <div class="col"><div class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div></div>
-          </li>
-
-          <li>
-            <div class="col">
-              <div class="title">Organizacja 3</div>
-              <div class="subtitle">Lorem ipsum dolor sit amet consectetur.</div>
-            </div>
-
-            <div class="col"><div class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div></div>
-          </li>
-
-          <li>
-            <div class="col">
-              <div class="title">Organizacja 4</div>
+              <div class="title">{{ obj.name }}</div>
               <div class="subtitle">Lorem ipsum dolor sit amet consectetur.</div>
             </div>
 
             <div class="col"><div class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div></div>
           </li>
         </ul>
+          {% endfor %}
+    <ul class="help--slides-pagination">
+          {% if ngos_pages.has_previous %}
+        <li>
+            <a href="?page={{ ngos_pages.previous_page_number }}#help"><i class="fa fa-chevron-left"
+                                                          aria-hidden="true"></i>&nbsp previous &nbsp</a>
+        </li>
+    {% else %}
+        <li class="disabled"><span><i class="" aria-hidden="true"></i></span></li>
+    {% endif %}
+    {% if ngos_pages.number|add:'-4' > 1 %}
+        <li>
+            <a href="?page={{ ngos_pages.number|add:'-5' }}#help"> &hellip;</a>
+        </li>
+    {% endif %}
+    {% for i in ngos_pages.paginator.page_range %}
+        {% if ngos_pages.number == i %}
+            <li class="active"><span>|&nbsp{{ i }}&nbsp|<span class="sr-only"></span></span></li>
+        {% elif i > ngos_pages.number|add:'-5' and i < ngos_pages.number|add:'5' %}
+    <li>
+        <a href="?page={{ i }}#help">&nbsp{{ i }}&nbsp</a>
+    </li>
+        {% endif %}
+    {% endfor %}
 
-        <!-- Pagination
-        <ul class="help--slides-pagination">
-          <li><a href="#" class="btn btn--small btn--without-border active" data-page="1">1</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="2">2</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="3">3</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="4">4</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="5">5</a></li>
+    {% if ngos_pages.paginator.num_pages > ngos_pages.number|add:'4' %}
+    <li>
+        <a href="?page={{ ngos_pages.number|add:'5' }}#help"> &hellip;</a>
+    </li>
+    {% endif %}
+
+    {% if ngos_pages.has_next %}
+        <li>
+            <a href="?page={{ ngos_pages.next_page_number }}#help">&nbsp next &nbsp<i class="fa fa-chevron-right"
+                      aria-hidden="true"></i></a>
+        </li>
+    {% else %}
+        <li class="disabled"><span><i class="fa" aria-hidden="true"></i></span></li>
+    {% endif %}
         </ul>
-        -->
+
       </div>
 
       <!-- SLIDE 3 -->
       <div class="help--slides" data-id="3">
         <p>Lorem ipsum dolor sit amet, his ocurreret persequeris ea, ad utinam laudem duo. Verterem adipisci partiendo eos ne, ea his reque quaeque recteque, ne quo lobortis intellegam.</p>
         <ul class="help--slides-items">
+            {% for obj in charity_pages.object_list %}
           <li>
             <div class="col">
-              <div class="title">Lokalna zbiórka 1</div>
-              <div class="subtitle">Lorem ipsum dolor sit amet consectetur.</div>
-            </div>
-
-            <div class="col"><div class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div></div>
-          </li>
-
-          <li>
-            <div class="col">
-              <div class="title">Lokalna zbiórka 2</div>
+              <div class="title">{{ obj.name }}</div>
               <div class="subtitle">Lorem ipsum dolor sit amet consectetur.</div>
             </div>
 
             <div class="col"><div class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div></div>
           </li>
         </ul>
-
-        <!-- Pagination
+          {% endfor %}
         <ul class="help--slides-pagination">
-          <li><a href="#" class="btn btn--small btn--without-border active" data-page="1">1</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="2">2</a></li>
+          {% if charity_pages.has_previous %}
+        <li>
+            <a href="?page={{ charity_pages.previous_page_number }}#help"><i class="fa fa-chevron-left"
+                                                          aria-hidden="true"></i>&nbsp previous &nbsp</a>
+        </li>
+    {% else %}
+        <li class="disabled"><span><i class="" aria-hidden="true"></i></span></li>
+    {% endif %}
+    {% if charity_pages.number|add:'-4' > 1 %}
+        <li>
+            <a href="?page={{ charity_pages.number|add:'-5' }}#help"> &hellip;</a>
+        </li>
+    {% endif %}
+    {% for i in charity_pages.paginator.page_range %}
+        {% if charity_pages.number == i %}
+            <li class="active"><span>|&nbsp{{ i }}&nbsp|<span class="sr-only"></span></span></li>
+        {% elif i > charity_pages.number|add:'-5' and i < charity_pages.number|add:'5' %}
+    <li>
+        <a href="?page={{ i }}#help">&nbsp{{ i }}&nbsp</a>
+    </li>
+        {% endif %}
+    {% endfor %}
+
+    {% if charity_pages.paginator.num_pages > charity_pages.number|add:'4' %}
+    <li>
+        <a href="?page={{ charity_pages.number|add:'5' }}#help"> &hellip;</a>
+    </li>
+    {% endif %}
+
+    {% if charity_pages.has_next %}
+        <li>
+            <a href="?page={{ charity_pages.next_page_number }}#help">&nbsp next &nbsp<i class="fa fa-chevron-right"
+                      aria-hidden="true"></i></a>
+        </li>
+    {% else %}
+        <li class="disabled"><span><i class="fa" aria-hidden="true"></i></span></li>
+    {% endif %}
         </ul>
-        -->
+
       </div>
     </section>
 
