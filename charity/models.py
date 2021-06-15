@@ -6,6 +6,9 @@ from django.db.models import CASCADE
 class Category(models.Model):
     name = models.CharField(max_length=32)
 
+    def __str__(self):
+        return self.name
+
 
 INSTITUTIONS = (
     (1, 'fundacja'),
